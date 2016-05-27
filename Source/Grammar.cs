@@ -36,7 +36,7 @@ namespace Tracery
 			return modifier.Invoke(text);
 		}
 
-		public void PushRules(string key, TraceryNode[] rules)
+		public void PushRules(string key, IEnumerable<TraceryNode> rules)
 		{
 			Stack<TraceryNode[]> stack;
 			if (!symbols.TryGetValue(key, out stack))
@@ -44,10 +44,10 @@ namespace Tracery
 				stack = new Stack<TraceryNode[]>();
 				symbols.Add(key, stack);
 			}
-			stack.Push(rules);
+			stack.Push(rules.ToArray());
 		}
 
-		public void PushRules(string key, string[] rawRules)
+		public void PushRules(string key, IEnumerable<string> rawRules)
 		{
 			TraceryNode[] rules = rawRules.Select((raw) => Tracery.ParseRule(raw)).ToArray();
 			PushRules(key, rules);
