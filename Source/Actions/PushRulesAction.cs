@@ -22,7 +22,10 @@ namespace Tracery
 		{
 			// eagerly flatten the rules to plaintext
 			TraceryNode[] textRules = rules
-				.Select((node) => new PlaintextNode(node.Flatten(grammar)))
+				.Select((node) => {
+					string plaintext = node.Flatten(grammar);
+					return new PlaintextNode(plaintext, plaintext);
+				})
 				.ToArray();
 			// push the flattened rules to the grammar
 			grammar.PushRules(key, textRules);

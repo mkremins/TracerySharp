@@ -1,7 +1,14 @@
 ﻿namespace Tracery
 {
-	public interface TraceryNode
+	public abstract class TraceryNode
 	{
-		string Flatten(Grammar grammar);
+		public readonly string Raw;
+
+		public TraceryNode(string raw)
+		{
+			this.Raw = raw;
+		}
+
+		public abstract string Flatten(Grammar grammar);
 	}
 }

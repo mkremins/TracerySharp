@@ -4,12 +4,12 @@
 	{
 		private string text;
 
-		public PlaintextNode(string text)
+		public PlaintextNode(string text, string raw) : base(raw)
 		{
 			this.text = text;
 		}
 
-		public string Flatten(Grammar grammar)
+		public override string Flatten(Grammar grammar)
 		{
 			return text;
 		}

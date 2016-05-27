@@ -2,14 +2,14 @@
 {
 	public class ActionNode : TraceryNode
 	{
-		public NodeAction action;
+		public readonly NodeAction action;
 
-		public ActionNode(NodeAction action)
+		public ActionNode(NodeAction action, string raw) : base(raw)
 		{
 			this.action = action;
 		}
 
-		public string Flatten(Grammar grammar)
+		public override string Flatten(Grammar grammar)
 		{
 			// execute the action
 			action.Activate(grammar);

@@ -6,12 +6,12 @@ namespace Tracery
 	{
 		private TraceryNode[] sections;
 
-		public RuleNode(TraceryNode[] sections)
+		public RuleNode(TraceryNode[] sections, string raw) : base(raw)
 		{
 			this.sections = sections;
 		}
 
-		public string Flatten(Grammar grammar)
+		public override string Flatten(Grammar grammar)
 		{
 			StringBuilder builder = new StringBuilder();
 			foreach (TraceryNode section in sections)

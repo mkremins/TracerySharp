@@ -10,20 +10,23 @@ namespace Tracery
 	{
 		private string rawRule;
 		private int pos;
+		private Stack<StringBuilder> contexts;
 
 		public Parser(string rawRule)
 		{
 			this.rawRule = rawRule;
 			this.pos = 0;
+			this.contexts = new Stack<StringBuilder>();
 		}
 
 		public TraceryNode Parse()
 		{
+			PushContext();
 			IList<TraceryNode> nodes = new List<TraceryNode>();
 
 			while (!Eof())
 			{
-				switch (rawRule[pos])
+				switch (CurrentChar())
 				{
 				case '[':
 					nodes.Add(ParseAction());
@@ -37,12 +40,13 @@ namespace Tracery
 				}
 			}
 
-			return new RuleNode(nodes.ToArray());
+			return new RuleNode(nodes.ToArray(), PopContext());
 		}
 
 		private ActionNode ParseAction()
 		{
-			pos++; // advance past the opening [ character
+			PushContext();
+			Advance(); // advance past the opening [ character
 
 			StringBuilder builder = new StringBuilder();
 			int depth = 1; // the number of [ characters we've encountered, minus the number of ] characters
@@ -52,7 +56,7 @@ namespace Tracery
 			{
 				CheckUnexpectedEof();
 
-				char current = rawRule[pos];
+				char current = CurrentChar();
 
 				if (escapeNext)
 				{
@@ -85,7 +89,7 @@ namespace Tracery
 					}
 				}
 
-				pos++;
+				Advance();
 			}
 
 			string[] parts = builder.ToString().Split(new char[]{':'}, 2);
@@ -104,31 +108,33 @@ namespace Tracery
 					.ToArray();
 				action = new PushRulesAction(key, ruleNodes);
 			}
-			return new ActionNode(action);
+			return new ActionNode(action, PopContext());
 		}
 
 		private PlaintextNode ParsePlaintext()
 		{
+			PushContext();
+
 			StringBuilder builder = new StringBuilder();
 			bool escapeNext = false;
 
 			while (!Eof())
 			{
-				char current = rawRule[pos];
+				char current = CurrentChar();
 
 				if (escapeNext)
 				{
 					// TODO maybe check that char is a valid escape character?
 					builder.Append(current);
 					escapeNext = false;
-					pos++;
+					Advance();
 				}
 				else
 				{
 					if (current == '\\')
 					{
 						escapeNext = true;
-						pos++;
+						Advance();
 					}
 					else if (current == '#' || current == '[')
 					{
@@ -137,21 +143,22 @@ namespace Tracery
 					else
 					{
 						builder.Append(current);
-						pos++;
+						Advance();
 					}
 				}
 			}
 
-			return new PlaintextNode(builder.ToString());
+			return new PlaintextNode(builder.ToString(), PopContext());
 		}
 
 		private TagNode ParseTag()
 		{
-			pos++; // advance past the opening # character
+			PushContext();
+			Advance(); // advance past the opening # character
 
 			// parse a sequence of zero or more preActions
 			IList<NodeAction> preActions = new List<NodeAction>();
-			while (rawRule[pos] == '[')
+			while (CurrentChar() == '[')
 			{
 				ActionNode actionNode = ParseAction();
 				preActions.Add(actionNode.action);
@@ -164,7 +171,7 @@ namespace Tracery
 			{
 				CheckUnexpectedEof();
 
-				char current = rawRule[pos];
+				char current = CurrentChar();
 
 				if (escapeNext)
 				{
@@ -180,7 +187,7 @@ namespace Tracery
 					}
 					else if (current == '#')
 					{
-						pos++;
+						Advance();
 						break; // unescaped tag-closing character – end current tag
 					}
 					else
@@ -189,7 +196,7 @@ namespace Tracery
 					}
 				}
 
-				pos++;
+				Advance();
 			}
 
 			// parse the contents of the tag into a TagNode
@@ -199,12 +206,27 @@ namespace Tracery
 			Assert.IsTrue(parts.Length > 0);
 			string key = parts[0];
 			string[] modifiers = parts.Skip(1).ToArray();
-			return new TagNode(key, modifiers, preActions.ToArray());
+			return new TagNode(key, modifiers, preActions.ToArray(), PopContext());
 		}
 
 		private bool Eof()
 		{
 			return pos >= rawRule.Length;
+		}
+
+		private char CurrentChar()
+		{
+			return rawRule[pos];
+		}
+
+		private void Advance()
+		{
+			char current = CurrentChar();
+			foreach (StringBuilder context in contexts)
+			{
+				context.Append(current);
+			}
+			pos++;
 		}
 
 		private void CheckUnexpectedEof()
@@ -213,6 +235,16 @@ namespace Tracery
 			{
 				throw new Exception("Encountered unexpected end of rule: " + rawRule);
 			}
+		}
+
+		private void PushContext()
+		{
+			contexts.Push(new StringBuilder());
+		}
+
+		private string PopContext()
+		{
+			return contexts.Pop().ToString();
 		}
 	}
 }

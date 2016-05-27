@@ -9,7 +9,7 @@ namespace Tracery
 		private NodeAction[] preActions;
 		private NodeAction[] postActions;
 
-		public TagNode(string key, string[] modifiers, NodeAction[] preActions)
+		public TagNode(string key, string[] modifiers, NodeAction[] preActions, string raw) : base(raw)
 		{
 			this.key = key;
 			this.modifiers = modifiers;
@@ -20,7 +20,7 @@ namespace Tracery
 				.ToArray();
 		}
 
-		public string Flatten(Grammar grammar)
+		public override string Flatten(Grammar grammar)
 		{
 			foreach (NodeAction preAction in preActions)
 			{
@@ -39,6 +39,6 @@ namespace Tracery
 			}
 
 			return text;
-		} 
+		}
 	}
 }
