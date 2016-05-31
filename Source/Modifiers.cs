@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Tracery
 {
-	public class BaseEngModifiers
+	public class Modifiers
 	{
 		public static IDictionary<string,Func<string,string>> BASE_ENG_MODIFIERS;
 
-		static BaseEngModifiers()
+		static Modifiers()
 		{
 			BASE_ENG_MODIFIERS = new Dictionary<string,Func<string,string>>();
 			BASE_ENG_MODIFIERS.Add("a", A);

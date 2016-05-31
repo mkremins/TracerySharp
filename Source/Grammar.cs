@@ -13,7 +13,7 @@ namespace Tracery
 		public Grammar()
 		{
 			modifiers = new Dictionary<string,Func<string,string>>();
-			AddModifiers(BaseEngModifiers.BASE_ENG_MODIFIERS);
+			AddModifiers(Modifiers.BASE_ENG_MODIFIERS);
 			symbols = new Dictionary<string,Stack<TraceryNode[]>>();
 			rand = new System.Random();
 		}
