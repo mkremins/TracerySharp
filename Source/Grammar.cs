@@ -8,14 +8,12 @@ namespace Tracery
 	{
 		private IDictionary<string,Func<string,string>> modifiers;
 		private IDictionary<string,Stack<TraceryNode[]>> symbols;
-		private System.Random rand;
 
 		public Grammar()
 		{
 			modifiers = new Dictionary<string,Func<string,string>>();
 			AddModifiers(Modifiers.BASE_ENG_MODIFIERS);
 			symbols = new Dictionary<string,Stack<TraceryNode[]>>();
-			rand = new System.Random();
 		}
 
 		public void AddModifiers(IDictionary<string,Func<string,string>> modifiers)
@@ -81,7 +79,7 @@ namespace Tracery
 
 		private T RandItem<T>(T[] items)
 		{
-			return items[rand.Next(items.Length)];
+			return items[Tracery.Rng.Next(items.Length)];
 		}
 	}
 }
