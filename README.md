@@ -27,7 +27,14 @@ Grammar grammar = go.GetComponent<TraceryGrammar>().Grammar;
 
 #### Method 2: Load from JSON
 
-This method of creating grammars isn't supported just yet. More information coming soon!
+Add the JSON file containing your serialized grammar to the `Assets/Resources` directory within your Unity project. Then you can access it in your scripts as follows:
+
+```C#
+TextAsset jsonFile = Resources.Load("grammar") as TextAsset; // assuming the file is at Assets/Resources/grammar.json
+Grammar grammar = Grammar.LoadFromJSON(jsonFile);
+```
+
+You can also use `Grammar.LoadFromJSON(string jsonString)` to load a grammar directly from a JSON string.
 
 #### Method 3: Write a script
 
@@ -58,3 +65,11 @@ TracerySharp is still incomplete, but you should be able to use most of the basi
 ```C#
 Tracery.Rng = new System.Random(42); // replace 42 with whatever seed you want
 ```
+
+## Credits
+
+[Tracery](http://tracery.io/) was originally designed and developed by [Kate Compton](http://www.galaxykate.com/).
+
+[Max Kreminski](http://mkremins.github.io/) ported it to C# for use with Unity.
+
+JSON parsing is done with [SimpleJSON](http://wiki.unity3d.com/index.php/SimpleJSON). SimpleJSON was originally developed by Bunny83 and later modified by oPless.

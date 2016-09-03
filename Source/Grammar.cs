@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using SimpleJSON;
+using UnityEngine;
 
 namespace Tracery
 {
@@ -14,6 +16,37 @@ namespace Tracery
 			modifiers = new Dictionary<string,Func<string,string>>();
 			AddModifiers(Modifiers.BASE_ENG_MODIFIERS);
 			symbols = new Dictionary<string,Stack<TraceryNode[]>>();
+		}
+
+		public static Grammar LoadFromJSON(string jsonString)
+		{
+			JSONClass root = JSON.Parse(jsonString).AsObject;
+			if (root == null)
+			{
+				throw new Exception("JSON-serialized grammar must be object");
+			}
+
+			Grammar grammar = new Grammar();
+
+			foreach (KeyValuePair<string,JSONNode> pair in root)
+			{
+				JSONArray val = pair.Value.AsArray;
+				if (val == null)
+				{
+					// TODO support non-array values (e.g. strings, objects) for top-level keys?
+					throw new Exception("Value for top-level key must be array");
+				}
+				// TODO throw if one of the array items isn't a string?
+				IEnumerable<string> rules = val.Children.Select((json) => json.Value);
+				grammar.PushRules(pair.Key, rules);
+			}
+
+			return grammar;
+		}
+
+		public static Grammar LoadFromJSON(TextAsset jsonFile)
+		{
+			return LoadFromJSON(jsonFile.text);
 		}
 
 		public void AddModifiers(IDictionary<string,Func<string,string>> modifiers)
