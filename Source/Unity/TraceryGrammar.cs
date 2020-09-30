@@ -15,7 +15,7 @@ public class TraceryGrammar : MonoBehaviour
 			{
 				grammar.PushRules(s.key, s.rules.Split('\n'));
 			}
-			return grammar;
+				return grammar;
 		}
 	}
 

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Tracery
 {
@@ -92,7 +93,9 @@ namespace Tracery
 				Advance();
 			}
 
+		
 			string[] parts = builder.ToString().Split(new char[]{':'}, 2);
+			
 			Assert.AreEqual(parts.Length, 2); // TODO allow function actions
 			string key = parts[0];
 			NodeAction action;
