@@ -10,7 +10,7 @@ using Tracery;
 public class GrammarEditor : Editor
 {
 	private int selected = 0;
-	private string testValue = null;
+	private string testValue ="";
 
 	public override void OnInspectorGUI()
 	{
@@ -60,7 +60,7 @@ public class GrammarEditor : Editor
 
 			GUILayout.Space(5);
 
-			if (GUILayout.Button("Test Grammar") || testValue == null)
+			if (GUILayout.Button("Test Grammar")|| testValue==null)
 			{
 				Grammar grammar = ((TraceryGrammar)target).Grammar;
 				testValue = grammar.Flatten("#origin#");
